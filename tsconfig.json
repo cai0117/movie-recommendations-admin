@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "es5",//目标语言的版本
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],//Ts需要引用的库
+    "allowJs": true,//允许编译器编译js和jsx文件
+    "skipLibCheck": true,
+    "esModuleInterop": true,//允许导入导出
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",//生成代码的标准模板
+    "moduleResolution": "node",//模块解析策略，ts默认用node的解析策略，即相对的方式导入
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,//不输出文件，编译后不会生成如何js文件
+    "jsx": "react-jsx",
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules"
+      }
+    ],//运行的插件
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@redux/*": ["./src/redux/*"],
+      "@slices/*": ["src/slices/*"],
+      "@api/*": ["./src/api/*"],
+      "@components/*": ["./src/components/*"]
+    }//相对于baseUrl配置
+  },
+  "include": [
+    "src"
+  ]
+}
