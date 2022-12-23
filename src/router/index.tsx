@@ -4,7 +4,7 @@ import HomePage from "@pages/home";
 import NotFoundPage from "@pages/404";
 import LoginPage from "@/pages/login";
 // import AuthLayout from "./utils/authLayout";
-
+const CustomerPage = React.lazy(() => import("@/pages/customer"));
 const routeList: RouteObject[] = [
   {
     path: "/",
@@ -17,6 +17,12 @@ const routeList: RouteObject[] = [
   {
     path: "/home",
     element: <HomePage />,
+    children: [
+      {
+        path: "customerManagement",
+        element: <CustomerPage />,
+      },
+    ],
   },
   {
     path: "*",
