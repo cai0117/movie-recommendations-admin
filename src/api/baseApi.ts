@@ -9,17 +9,18 @@ import {
 import { QueryReturnValue } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
 import { Mutex } from "async-mutex";
 import { store } from "@redux/store";
+import { clear as tokenClear, setToken } from "@slices/tokenSlice";
+import { clear as userInfoClear } from "@slices/userSlice";
 type ResultData = {
   code: number;
   msg: string;
-  success: boolean;
   data: any;
 };
 const mutex = new Mutex();
 const baseQuery = fetchBaseQuery({
-  baseUrl: process.env.BASE_URL,
+  baseUrl: "http://localhost:9091",
   prepareHeaders: (headers) => {
-    // headers.set("token", store.getState().token.token);
+    headers.set("token", store.getState().token.token);
     return headers;
   },
 });
@@ -30,81 +31,76 @@ const baseQueryWithIntercept: BaseQueryFn<
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
   async function refreshToken() {
-    //     if (!mutex.isLocked()) {
-    //       const release = await mutex.acquire();
-    //       try {
-    //         const refreshToken = store.getState().token.refreshToken;
-    //         const token = store.getState().token.token;
-    //         const userId = store.getState().user.id;
-    //         if (refreshToken && userId && token) {
-    //           const result = await baseQuery(
-    //             {
-    //               url: `/erp/refreshToken`,
-    //               method: "post",
-    //               body: {
-    //                 refreshToken: store.getState().token.refreshToken,
-    //                 userId: userId,
-    //               },
-    //             },
-    //             api,
-    //             extraOptions
-    //           );
-    //           const { data, error } = result;
-    //           const { data: newToken, success } = data as ResultData;
-    //           if (!success || !!error || !newToken) {
-    //             api.dispatch(tokenClear());
-    //             api.dispatch(userInfoClear());
-    //             return false;
-    //           }
-    //           api.dispatch(setToken(newToken));
-    //           return true;
-    //         } else {
-    //           api.dispatch(tokenClear());
-    //           api.dispatch(userInfoClear());
-    //           return false;
-    //         }
-    //       } catch {
-    //         api.dispatch(tokenClear());
-    //         api.dispatch(userInfoClear());
-    //         return false;
-    //       } finally {
-    //         release();
-    //       }
-    //     } else {
-    //       await mutex.waitForUnlock();
-    //       return true;
-    //     }
+    if (!mutex.isLocked()) {
+      const release = await mutex.acquire();
+      try {
+        const refreshToken = store.getState().token.refreshToken;
+        const token = store.getState().token.token;
+        const userId = store.getState().user.userId;
+        if (refreshToken && userId && token) {
+          const result = await baseQuery(
+            {
+              url: `/erp/refreshToken`,
+              method: "post",
+              body: {
+                refreshToken: store.getState().token.refreshToken,
+                userId: userId,
+              },
+            },
+            api,
+            extraOptions
+          );
+          const { data, error } = result;
+          const { data: newToken } = data as ResultData;
+          if (!!error || !newToken) {
+            api.dispatch(tokenClear());
+            api.dispatch(userInfoClear());
+            return false;
+          }
+          api.dispatch(setToken(newToken));
+          return true;
+        } else {
+          api.dispatch(tokenClear());
+          api.dispatch(userInfoClear());
+          return false;
+        }
+      } catch {
+        api.dispatch(tokenClear());
+        api.dispatch(userInfoClear());
+        return false;
+      } finally {
+        release();
+      }
+    } else {
+      await mutex.waitForUnlock();
+      return true;
+    }
   }
 
   await mutex.waitForUnlock();
   let result: QueryReturnValue<any, FetchBaseQueryError, FetchBaseQueryMeta> =
     await baseQuery(args, api, extraOptions);
   const { error, data } = result;
-  if (data) {
-    const { msg, success } = data as ResultData;
-    if (!success) {
-      throw new Error(msg);
-    }
-  }
+
   if (error) {
     const { status } = error as FetchBaseQueryError;
     //处理401错误
     if (status === 401) {
-      //   const refreshSuccess = await refreshToken();
-      //   // retry the initial query
-      //   if (refreshSuccess) {
-      //     let newResult: QueryReturnValue<
-      //       any,
-      //       FetchBaseQueryError,
-      //       FetchBaseQueryMeta
-      //     > = await baseQuery(args, api, extraOptions);
-      //     const { error } = newResult;
-      //     if (error) {
-      //       const errorData = error.data as any;
-      //       throw new Error(errorData.msg);
-      //     }
-      //     return newResult.data ? newResult.data : result;
-      //   }
+      const refreshSuccess = await refreshToken();
+      // retry the initial query
+      if (refreshSuccess) {
+        let newResult: QueryReturnValue<
+          any,
+          FetchBaseQueryError,
+          FetchBaseQueryMeta
+        > = await baseQuery(args, api, extraOptions);
+        const { error } = newResult;
+        if (error) {
+          const errorData = error.data as any;
+          throw new Error(errorData.msg);
+        }
+        return newResult.data ? newResult.data : result;
+      }
     }
     const errorData = error.data as any;
     throw new Error(errorData.msg);

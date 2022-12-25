@@ -1,4 +1,4 @@
-const STORAGE_PREFIX = "bjy_";
+const STORAGE_PREFIX = "movie_";
 
 export const TOKEN_STORAGE = STORAGE_PREFIX + "token";
 export const REFRESH_TOKEN_STORAGE = STORAGE_PREFIX + "refresh_token";

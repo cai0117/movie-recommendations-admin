@@ -6,12 +6,17 @@ import { useNavigate } from "react-router-dom";
 import { config as particleConfig } from "./particle.config";
 import Particles from "react-particles";
 import { loadFull } from "tsparticles";
+import { setRefreshToken, setToken } from "@slices/tokenSlice";
+import { setUserInfo } from "@slices/userSlice";
 import styles from "./index.module.less";
+import { useLoginMutation } from "@/api/userApi";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
+  const [login] = useLoginMutation();
+  const dispatch = useAppDispatch();
   const particlesInit = useCallback(async (engine: any) => {
     // you can initiate the tsParticles instance (engine) here, adding custom shapes or presets
     // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
@@ -20,7 +25,16 @@ const LoginPage = () => {
   }, []);
 
   const handleLogin = async () => {
+    let temp = {
+      account: account,
+      password: password,
+    };
+
     try {
+      const payload = await login(temp).unwrap();
+      dispatch(setToken(payload.token));
+      dispatch(setRefreshToken(payload.refreshToken));
+      dispatch(setUserInfo(payload.data));
       navigate("/home");
     } catch (error: any) {
       message.error(error.message);
@@ -35,14 +49,12 @@ const LoginPage = () => {
       />
       <div className={styles.container}>
         <div className={styles.loginContainer}>
-          {/* <div className={styles.title}>登录</div> */}
           <div className={styles.title}>
             <Space size={[40, 0]}>
               <span className={styles.check}>账号登录</span>
             </Space>
           </div>
 
-          {/* <Space direction="vertical" size={20}> */}
           <Space direction="vertical" size={0}>
             <Form>
               <Form.Item initialValue={account} name="account">
