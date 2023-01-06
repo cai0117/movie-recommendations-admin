@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./index.module.less";
 
 type Props = {
-  isError: boolean;
+  isError?: boolean;
   initialValues: any;
   onChange: (
     values: Partial<{
@@ -39,22 +39,36 @@ const SearchHeadr: React.FC<Props> = (props) => {
   return (
     <Form layout="inline" form={form} onFinish={handleFinish}>
       <Space size={[0, 16]} wrap>
-        <Form.Item name="keyword">
+        <Form.Item label="评分" name="rate">
           <Input
             allowClear
             className={styles.keyword}
-            placeholder="请输入姓名/手机号进行搜索"
+            placeholder="请输入评分进行搜索"
           />
         </Form.Item>
-
-        <Form.Item label="来源" name="origin">
-          <Select
+        <Form.Item label="电影名称" name="title">
+          <Input
             allowClear
-            className={styles.type}
-            placeholder="请选择录入方式"
-          >
-            <Option value="WECHAT">WECHAT</Option>
-          </Select>
+            className={styles.keyword}
+            placeholder="请输入电影名称进行搜索"
+          />
+        </Form.Item>
+        <Form.Item label="导演" name="director">
+          <Input
+            allowClear
+            className={styles.keyword}
+            placeholder="请输入导演进行搜索"
+          />
+        </Form.Item>
+        <Form.Item label="主演" name="protagonist">
+          <Input
+            allowClear
+            className={styles.keyword}
+            placeholder="请输入主演进行搜索"
+          />
+        </Form.Item>
+        <Form.Item label="类型" name="type">
+          <Input allowClear className={styles.type} placeholder="请输入类型" />
         </Form.Item>
         <Form.Item>
           <Space>
@@ -71,7 +85,7 @@ const SearchHeadr: React.FC<Props> = (props) => {
               //   navigate("/home/customerManagement/create");
               // }}
             >
-              新增客户
+              新增电影
             </Button>
           </Space>
         </Form.Item>

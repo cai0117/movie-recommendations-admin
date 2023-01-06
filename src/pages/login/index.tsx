@@ -26,15 +26,15 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     let temp = {
-      account: account,
+      tel: account,
       password: password,
     };
 
     try {
       const payload = await login(temp).unwrap();
+      console.log(payload);
       dispatch(setToken(payload.token));
-      dispatch(setRefreshToken(payload.refreshToken));
-      dispatch(setUserInfo(payload.data));
+      dispatch(setUserInfo(payload.userInfo));
       navigate("/home");
     } catch (error: any) {
       message.error(error.message);

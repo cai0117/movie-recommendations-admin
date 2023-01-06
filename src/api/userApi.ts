@@ -1,28 +1,26 @@
 import { baseApi } from "./baseApi";
 
 export type RoleAuthType = {
-  roleId: string;
   name: string;
   userId: string;
-  roleName: string;
-  roleCode: string;
+  tel: string;
+  status: string;
 };
 
 export type LoginReq = {
-  account: string;
+  tel: string;
   password: string;
 };
 
 type Result = {
   token: string;
-  refreshToken: string;
-  data: RoleAuthType;
+  userInfo: RoleAuthType;
 };
 const UserApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation<Result, LoginReq>({
       query: (data) => ({
-        url: "/admin/login",
+        url: "/movieUser/login",
         method: "post",
         body: {
           ...data,

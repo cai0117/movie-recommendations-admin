@@ -2,21 +2,18 @@ import React, { useCallback, useState, useEffect } from "react";
 import { message, Space } from "antd";
 import BasePage from "@/components/base-page";
 import type { TablePaginationConfig } from "antd/es/table";
-import {
-  Customer,
-  CustomerReq,
-  useGetAllCustomerMutation,
-} from "@/api/customer";
 import usePaginationKeeper from "@/hooks/usePaginationKeeper";
 import SearchHeadr from "./search-header";
-import CustomerTable from "./customer-table";
-const CustomerPage = () => {
-  const [customerList, setCustomerList] = useState<Customer[]>([]);
+import MovieInfoTable from "./movie-info-table";
+import { Movie, MovieReq, useGetAllMovieMutation } from "@/api/movie";
+
+const MovieInfoPage = () => {
+  const [data, setData] = useState<Movie[]>([]);
   const [pagination, setPagination] = useState<TablePaginationConfig>({
     current: 1,
     pageSize: 10,
   });
-  const [getAllCustomer, { isLoading, isError }] = useGetAllCustomerMutation();
+  const [getAllMovie, { isLoading, isError }] = useGetAllMovieMutation();
   const { current, size, input } = usePaginationKeeper();
   useEffect(() => {
     handlePageChange({
@@ -25,11 +22,12 @@ const CustomerPage = () => {
       input: input.current,
     });
   }, []);
+
   const handlePageChange = useCallback(
-    async (data: CustomerReq) => {
+    async (data: MovieReq) => {
       try {
-        const payload = await getAllCustomer(data).unwrap();
-        setCustomerList(payload.records);
+        const payload = await getAllMovie(data).unwrap();
+        setData(payload.records);
         setPagination({
           current: payload.current,
           pageSize: payload.size,
@@ -44,7 +42,7 @@ const CustomerPage = () => {
         message.error(error.message);
       }
     },
-    [getAllCustomer]
+    [getAllMovie]
   );
 
   const handleValuesChange = (
@@ -69,20 +67,20 @@ const CustomerPage = () => {
     <BasePage>
       <Space direction="vertical" size={[0, 40]}>
         <SearchHeadr
-          isError={isError}
           onChange={handleValuesChange}
           initialValues={input.current}
+          isError={isError}
         />
 
-        <CustomerTable
+        <MovieInfoTable
           pagination={pagination}
           onChange={handleValuesChange}
-          data={customerList}
           isLoading={isLoading}
+          data={data}
         />
       </Space>
     </BasePage>
   );
 };
 
-export default CustomerPage;
+export default MovieInfoPage;

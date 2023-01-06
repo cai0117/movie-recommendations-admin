@@ -1,6 +1,12 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react";
+import React, {
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+  Suspense,
+} from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Spin } from "antd";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 // import { useGetDictsQuery } from "@api/dictApi";
 import menu, { MenuType } from "../../constants/menu";
@@ -58,18 +64,14 @@ const HomePage = () => {
     );
   }, [pathname, userMenu]);
 
-  const handleMenuChange = useCallback(
-    ({ key }: { key: string }) => {
-      let chooseItem = userMenu.find((item) => item.key === key);
-      if (chooseItem?.path) navigate(chooseItem.path);
-    },
-    [navigate, userMenu]
-  );
+  const handleMenuChange = (SelectEventHandler: any) => {
+    navigate(SelectEventHandler.item.props.path);
+  };
 
   return (
     <Layout className={styles.container}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className={styles.logo}></div>
+        <div className={styles.logo}>电影推荐系统</div>
         <Menu
           theme="dark"
           mode="inline"
@@ -91,7 +93,24 @@ const HomePage = () => {
           <UserButton />
         </Header>
         <Content className={styles.content}>
-          <Outlet />
+          {/*使用React懒加载需要Suspense来进行loading*/}
+          <Suspense
+            fallback={
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Spin />
+              </div>
+            }
+          >
+            <Outlet />
+          </Suspense>
         </Content>
       </Layout>
     </Layout>
