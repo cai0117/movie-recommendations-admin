@@ -2,16 +2,18 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Space, Table } from "antd";
 import type { TablePaginationConfig, ColumnsType } from "antd/es/table";
+import { Movie } from "@/api/movie";
 
 type Props = {
   pagination: TablePaginationConfig;
-
+  data: Movie[];
+  isLoading: boolean;
   onChange: (values: {
     pagination: Partial<{ tCurrent: number; tSize: number }>;
   }) => void;
 };
 const MovieRemarkTable: React.FC<Props> = (props) => {
-  const { pagination, onChange } = props;
+  const { pagination, onChange, isLoading, data } = props;
   const navigate = useNavigate();
 
   const handleTableChange = async (pagination: TablePaginationConfig) => {
@@ -19,75 +21,51 @@ const MovieRemarkTable: React.FC<Props> = (props) => {
       pagination: { tCurrent: pagination.current, tSize: pagination.pageSize },
     });
   };
-  // const columns: ColumnsType<> = [
-  //   {
-  //     title: "姓名",
-  //     dataIndex: "fullName",
-  //     width: "15%",
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "手机号",
-  //     width: "15%",
-  //     dataIndex: "tel",
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "昵称",
-  //     width: "15%",
-  //     dataIndex: "nickname",
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "注册时间",
-  //     width: "15%",
-  //     dataIndex: "createTime",
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "录入方式",
-  //     width: "15%",
-  //     dataIndex: "registerWay",
-  //     render: (value) => {
-  //       if (value === 1) return "自主注册";
-  //       if (value === 2) return "手工录入";
-  //     },
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "推荐人",
-  //     dataIndex: "recommendName",
-  //     width: "15%",
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "操作",
-  //     width: "10%",
-  //     render: (_: string, { id, tel }) => (
-  //       <Space size="small">
-
-  //           <Button
-  //             type="primary"
-  //             ghost
-
-  //           >
-  //             编辑
-  //           </Button>
-
-  //         <Button
-  //           type="primary"
-  //           ghost
-
-  //         >
-  //           开单
-  //         </Button>
-  //       </Space>
-  //     ),
-  //     align: "center",
-  //   },
-  // ];
+  const columns: ColumnsType<Movie> = [
+    {
+      title: "电影名称",
+      dataIndex: "title",
+      align: "center",
+    },
+    {
+      title: "电影评分",
+      dataIndex: "rate",
+      width: 100,
+      align: "center",
+    },
+    {
+      title: "类型",
+      dataIndex: "type",
+      align: "center",
+    },
+    {
+      title: "留言",
+      dataIndex: "hotShortCommend",
+      align: "center",
+    },
+    {
+      title: "操作",
+      width: "10%",
+      render: (_: string) => (
+        <Space size="small">
+          <Button type="primary" ghost>
+            编辑
+          </Button>
+        </Space>
+      ),
+      align: "center",
+    },
+  ];
   return (
-    <Table bordered pagination={pagination} onChange={handleTableChange} />
+    <Table
+      bordered
+      rowKey={(item) => item.movieId}
+      dataSource={data}
+      columns={columns}
+      loading={isLoading}
+      pagination={pagination}
+      onChange={handleTableChange}
+    />
   );
 };
 

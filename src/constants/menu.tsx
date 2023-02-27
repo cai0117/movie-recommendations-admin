@@ -26,13 +26,7 @@ const menu: MenuType[] = [
     path: "/home/customerManagement",
     // roles: [ADMIN_ROLE, STORE_MANAGER_ROLE],
   },
-  {
-    key: "payment",
-    icon: <ShopOutlined />,
-    label: "支付管理",
-    path: "/home/paymentManagement",
-    // roles: [ADMIN_ROLE],
-  },
+
   {
     key: "staff",
     icon: <TeamOutlined />,

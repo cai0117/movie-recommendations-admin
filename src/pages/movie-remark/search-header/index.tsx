@@ -43,19 +43,8 @@ const SearchHeadr: React.FC<Props> = (props) => {
           <Input
             allowClear
             className={styles.keyword}
-            placeholder="请输入姓名/手机号进行搜索"
+            placeholder="请输入影片名称进行搜索"
           />
-        </Form.Item>
-
-        <Form.Item label="录入方式" name="registerWay">
-          <Select
-            allowClear
-            className={styles.type}
-            placeholder="请选择录入方式"
-          >
-            <Option value={1}>自主注册</Option>
-            <Option value={2}>手工录入</Option>
-          </Select>
         </Form.Item>
         <Form.Item>
           <Space>
@@ -72,7 +61,7 @@ const SearchHeadr: React.FC<Props> = (props) => {
               //   navigate("/home/customerManagement/create");
               // }}
             >
-              新增客户
+              新增留言
             </Button>
           </Space>
         </Form.Item>
