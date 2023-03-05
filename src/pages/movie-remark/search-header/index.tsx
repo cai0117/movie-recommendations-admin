@@ -1,3 +1,4 @@
+import { MovieReq } from "@/api/movie";
 import { Button, Form, Input, Select, Space } from "antd";
 import React, { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +9,7 @@ type Props = {
   initialValues: any;
   onChange: (
     values: Partial<{
-      opt: Partial<{ registerWay: number; keyword: string }>;
+      opt: MovieReq["input"];
       pagination: Partial<{ tCurrent: number; tSize: number }>;
     }>
   ) => void;
@@ -28,7 +29,7 @@ const SearchHeadr: React.FC<Props> = (props) => {
       form.setFieldsValue(initialValues);
   }, []);
 
-  const handleFinish = (value: { keyword: string; registerWay: number }) => {
+  const handleFinish = (value: MovieReq["input"]) => {
     onChange({ opt: value, pagination: { tCurrent: 1 } });
   };
   const resetSearch = useCallback(() => {
@@ -39,7 +40,7 @@ const SearchHeadr: React.FC<Props> = (props) => {
   return (
     <Form layout="inline" form={form} onFinish={handleFinish}>
       <Space size={[0, 16]} wrap>
-        <Form.Item name="keyword">
+        <Form.Item name="title">
           <Input
             allowClear
             className={styles.keyword}

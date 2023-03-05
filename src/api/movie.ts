@@ -28,7 +28,6 @@ export type MovieReq = {
     rate: string;
     director: string;
     protagonist: string;
-
     type: string;
   }>;
 };

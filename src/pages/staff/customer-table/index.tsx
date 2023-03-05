@@ -1,17 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Space, Table } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import type { TablePaginationConfig, ColumnsType } from "antd/es/table";
+import { RoleAuthType } from "@/api/userApi";
 
 type Props = {
   pagination: TablePaginationConfig;
-
+  data: RoleAuthType[];
+  isLoading: boolean;
   onChange: (values: {
     pagination: Partial<{ tCurrent: number; tSize: number }>;
   }) => void;
 };
 const StaffTable: React.FC<Props> = (props) => {
-  const { pagination, onChange } = props;
+  const { pagination, onChange, isLoading, data } = props;
   const navigate = useNavigate();
 
   const handleTableChange = async (pagination: TablePaginationConfig) => {
@@ -19,75 +21,68 @@ const StaffTable: React.FC<Props> = (props) => {
       pagination: { tCurrent: pagination.current, tSize: pagination.pageSize },
     });
   };
-  // const columns: ColumnsType<> = [
-  //   {
-  //     title: "姓名",
-  //     dataIndex: "fullName",
-  //     width: "15%",
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "手机号",
-  //     width: "15%",
-  //     dataIndex: "tel",
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "昵称",
-  //     width: "15%",
-  //     dataIndex: "nickname",
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "注册时间",
-  //     width: "15%",
-  //     dataIndex: "createTime",
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "录入方式",
-  //     width: "15%",
-  //     dataIndex: "registerWay",
-  //     render: (value) => {
-  //       if (value === 1) return "自主注册";
-  //       if (value === 2) return "手工录入";
-  //     },
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "推荐人",
-  //     dataIndex: "recommendName",
-  //     width: "15%",
-  //     align: "center",
-  //   },
-  //   {
-  //     title: "操作",
-  //     width: "10%",
-  //     render: (_: string, { id, tel }) => (
-  //       <Space size="small">
+  const columns: ColumnsType<RoleAuthType> = [
+    {
+      title: "员工编号",
+      dataIndex: "userId",
 
-  //           <Button
-  //             type="primary"
-  //             ghost
+      align: "center",
+    },
+    {
+      title: "姓名",
+      dataIndex: "name",
 
-  //           >
-  //             编辑
-  //           </Button>
+      align: "center",
+    },
+    {
+      title: "手机号",
 
-  //         <Button
-  //           type="primary"
-  //           ghost
+      dataIndex: "tel",
+      align: "center",
+    },
+    {
+      title: "状态",
+      dataIndex: "status",
+      align: "center",
+      render: (_, record) =>
+        Number(record.status) === 1 ? (
+          <Tag color="green" key={record.status}>
+            启用
+          </Tag>
+        ) : (
+          <Tag color="red" key={record.status}>
+            禁用
+          </Tag>
+        ),
+    },
 
-  //         >
-  //           开单
-  //         </Button>
-  //       </Space>
-  //     ),
-  //     align: "center",
-  //   },
-  // ];
+    {
+      title: "操作",
+      width: "10%",
+      render: (_, record) => (
+        <Space size="small">
+          <Button type="primary" ghost>
+            编辑
+          </Button>
+
+          <Button type="primary" ghost>
+            开单
+          </Button>
+        </Space>
+      ),
+      align: "center",
+    },
+  ];
   return (
-    <Table bordered pagination={pagination} onChange={handleTableChange} />
+    <Table
+      bordered
+      pagination={pagination}
+      onChange={handleTableChange}
+      loading={isLoading}
+      rowKey={(item) => item.userId}
+      dataSource={data}
+      columns={columns}
+    />
   );
 };
 

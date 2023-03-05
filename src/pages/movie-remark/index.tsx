@@ -46,7 +46,7 @@ const MovieRemarkPage = () => {
 
   const handleValuesChange = (
     values: Partial<{
-      opt: Partial<{ registerWay: number; keyword: string }>;
+      opt: MovieReq["input"];
       pagination: Partial<{ tCurrent: number; tSize: number }>;
     }>
   ) => {

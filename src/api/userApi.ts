@@ -16,6 +16,24 @@ type Result = {
   token: string;
   userInfo: RoleAuthType;
 };
+
+export type UserRequest = {
+  current: number;
+  size: number;
+  input: Partial<{
+    name: string;
+    tel: string;
+    status: number;
+  }>;
+};
+
+type Response<T> = {
+  current: number;
+  size: number;
+  total: number;
+  records: T[];
+};
+
 const UserApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation<Result, LoginReq>({
@@ -27,9 +45,16 @@ const UserApi = baseApi.injectEndpoints({
         },
       }),
     }),
+    getUserList: builder.mutation<Response<RoleAuthType>, UserRequest>({
+      query: (data) => ({
+        url: "/movieUser/query",
+        method: "post",
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation } = UserApi;
+export const { useLoginMutation, useGetUserListMutation } = UserApi;
 
 export default UserApi;

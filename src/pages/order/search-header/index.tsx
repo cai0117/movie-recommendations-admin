@@ -1,3 +1,4 @@
+import { OrderReq } from "@/api/orderApi";
 import { Button, Form, Input, Select, Space } from "antd";
 import React, { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +9,7 @@ type Props = {
   initialValues: any;
   onChange: (
     values: Partial<{
-      opt: Partial<{ registerWay: number; keyword: string }>;
+      opt: OrderReq["input"];
       pagination: Partial<{ tCurrent: number; tSize: number }>;
     }>
   ) => void;
@@ -28,7 +29,7 @@ const SearchHeadr: React.FC<Props> = (props) => {
       form.setFieldsValue(initialValues);
   }, []);
 
-  const handleFinish = (value: { keyword: string; registerWay: number }) => {
+  const handleFinish = (value: OrderReq["input"]) => {
     onChange({ opt: value, pagination: { tCurrent: 1 } });
   };
   const resetSearch = useCallback(() => {
@@ -39,23 +40,26 @@ const SearchHeadr: React.FC<Props> = (props) => {
   return (
     <Form layout="inline" form={form} onFinish={handleFinish}>
       <Space size={[0, 16]} wrap>
-        <Form.Item name="keyword">
+        <Form.Item name="orderId">
           <Input
             allowClear
             className={styles.keyword}
-            placeholder="请输入姓名/手机号进行搜索"
+            placeholder="请输入订单编号"
           />
         </Form.Item>
-
-        <Form.Item label="录入方式" name="registerWay">
-          <Select
+        <Form.Item name="customerId">
+          <Input
             allowClear
-            className={styles.type}
-            placeholder="请选择录入方式"
-          >
-            <Option value={1}>自主注册</Option>
-            <Option value={2}>手工录入</Option>
-          </Select>
+            className={styles.keyword}
+            placeholder="请输入客户编号"
+          />
+        </Form.Item>
+        <Form.Item name="title">
+          <Input
+            allowClear
+            className={styles.keyword}
+            placeholder="请输入电影名称"
+          />
         </Form.Item>
         <Form.Item>
           <Space>
